@@ -2,6 +2,7 @@
 import itertools
 import glob
 import sys
+import os.path
 
 def gen_open(filenames):
     """opens files"""
@@ -74,15 +75,17 @@ def main():
     events_per_file = int(sys.argv[1])
     file_blocks = gen_sized_chunks(events, events_per_file)
 
-    file_no = -1
     out_base_name = sys.argv[3]
-    for fb in file_blocks:
+    file_no = 0
+    while os.path.exists(out_base_name+str(file_no)+".lhef"):
         file_no += 1
+    for fb in file_blocks:
         with open(out_base_name+str(file_no)+".lhef", "w") as f:
             f.writelines(header)
             for line in fb:
                 f.writelines(line)
             f.writelines(("</LesHouchesEvents>\n",))
+        file_no += 1
 
 if __name__ == "__main__":
     main()
